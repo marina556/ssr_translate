@@ -1,13 +1,13 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, TransferState } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HomeComponent } from './home/home.component';
+import { translateBrowserLoaderFactory } from './translate-browser.loader';
+import { TransferHttpCacheModule } from '@nguniversal/common';
 
 @NgModule({
   declarations: [
@@ -15,6 +15,7 @@ import { HomeComponent } from './home/home.component';
     HomeComponent,
   ],
   imports: [
+    TransferHttpCacheModule,
     HttpClientModule,
     BrowserModule.withServerTransition({appId: 'serverApp'}),
     AppRoutingModule,
@@ -22,8 +23,8 @@ import { HomeComponent } from './home/home.component';
       defaultLanguage: 'en',
       loader: {
         provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient],
+        useFactory: translateBrowserLoaderFactory,
+        deps: [HttpClient, TransferState],
       },
     }),
   ],
@@ -31,9 +32,4 @@ import { HomeComponent } from './home/home.component';
   bootstrap: [AppComponent],
 })
 export class AppModule {
-}
-
-// tslint:disable-next-line:typedef
-export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
